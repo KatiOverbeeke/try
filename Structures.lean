@@ -14,3 +14,5 @@ def distance (p1 : Point) (p2 : Point) : Float :=
   Float.sqrt (((p2.x - p1.x) ^ 2.0) + ((p2.y - p1.y) ^ 2.0))
 
 #eval distance { x := 1.0, y := 2.0 } { x := 5.0, y := -1.0 }
+
+#check 5
