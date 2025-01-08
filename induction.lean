@@ -41,6 +41,7 @@ induction' n with n ih
 rw[fac]; exact zero_lt_one;
 rw[fac];  exact mul_pos n.succ_pos ih
 
+
 theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) : i ∣ fac n := by
   induction' n with n ih
   exact absurd ipos (not_lt_of_ge ile)
@@ -49,14 +50,6 @@ theorem dvd_fac {i n : ℕ} (ipos : 0 < i) (ile : i ≤ n) : i ∣ fac n := by
   apply dvd_mul_of_dvd_right (ih h)
   rw[h]
   apply dvd_mul_right
-
-theorem pow_two_le_fac (n : ℕ) : 2 ^ (n - 1) ≤ fac n := by
-  rcases n with _ | n
-  · simp [fac]
-  induction' n with n ih
-  simp; rw[fac]; simp; simp[fac]
-  simp; rw[pow_add]; simp; rw[fac];
-  sorry
 
  theorem sum_id (n : ℕ) : ∑ i in Finset.range (n + 1), i = n * (n + 1) / 2 := by
    symm; apply Nat.div_eq_of_eq_mul_right (by norm_num : 0 < 2)
@@ -93,11 +86,8 @@ theorem pow_of_three (n : ℕ) : ∑ i in Finset.range (n + 1), 3^i = (3^(n+1) -
     rw[Finset.sum_range_succ, mul_add 2, pow_add 3 (n+1)]; simp; rw[ih]
     ring
 
-theorem sum_ex1 (n : ℕ) : ∑ i in Finset.range (n + 1), 4*i+3 = (n-1)*(2*n-1) := by
-    symm
-    induction' n with n ih
-    simp
-    sorry
+
+
 
 def fib : ℕ → ℕ
   | 0 => 0
@@ -105,6 +95,18 @@ def fib : ℕ → ℕ
   | 2=> 1
   | n + 2 => fib (n + 1) + fib n
 
-theorem pow_of_p (p:ℕ) ( n : ℕ) : ∑ i in Finset.range (n + 1), p^i = (p^(n+1) -1)/(p-1) := by
+inductive Pos : Type where
+  | one : Pos
+  | succ : Pos → Pos
+
+theorem pow_of_p (p:ℕ) ( n : ℕ) :1<p → ∑ i in Finset.range (n + 1), p^i = (p^(n+1) -1)/(p-1) := by
+    intro h1
     symm
-    sorry
+    apply Nat.div_eq_of_eq_mul_right
+    · omega
+    induction' n with n ih
+    simp
+    symm; symm at ih; rw[Finset.sum_range_succ,mul_add (p-1),pow_add p (n+1)]; simp; rw[ih]
+    ring_nf
+    refine Eq.symm (Nat.sub_eq_of_eq_add ?H2.succ.h)
+    apply?
